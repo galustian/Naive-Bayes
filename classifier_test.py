@@ -31,10 +31,16 @@ if __name__ == '__main__':
         spam_accuracy += prediction
     spam_accuracy /= len(spam_test)
 
-    for text in spam_test:
+    for text in legit_test:
         prediction = NB_classifier.predict(text)
         legit_accuracy += 1 - prediction
     legit_accuracy /= len(legit_test)
 
     print("Spam Text prediction accuracy:", spam_accuracy)
     print("Legit Text prediction accuracy:", legit_accuracy)
+
+    text_spam = "Win Free Money now! Apply today and get cash!"
+    text_legit = "A usual day without anything interesting"
+
+    print(text_spam, NB_classifier.predict(text_spam))
+    print(text_legit, NB_classifier.predict(text_legit))

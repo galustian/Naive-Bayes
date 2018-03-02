@@ -1,4 +1,3 @@
-import pandas as pd
 import nltk
 
 class NaiveBayesClassifier():
@@ -52,7 +51,7 @@ class NaiveBayesClassifier():
         # Bayes-Theorem
         # P(spam|W1, W2...) = P(W1, W2...|spam)*P(spam)  /  P(W1, W2...)
 
-        return self.prob_words_given_spam(words) * self.prob_spam() / self.prob_words(words)
+        return self.prob_words_given_spam(words) * self.prob_spam() / (self.prob_words(words) + 1e-170)
         
     def prob_words_given_spam(self, words):
         probability = 1
@@ -89,3 +88,28 @@ class NaiveBayesClassifier():
     def format_data(data):
         words = nltk.word_tokenize(data)
         return [w.lower() for w in words if w != ',' and w != '.']
+
+
+if __name__ == '__main__':
+    from sys import argv
+    import pandas as pd
+
+    df = pd.read_csv('spam.csv', encoding='ISO-8859-1')
+    spam_data, legit_data = [], []
+    
+    for _, row in df.iterrows():
+        if row['v1'] == 'spam':
+            spam_data.append(row['v2'])
+        else:
+            legit_data.append(row['v2'])
+
+    spam_train = spam_data[:int(len(spam_data)*2 / 3)]
+    spam_test = spam_data[int(len(spam_data)*2 / 3):]
+    legit_train = legit_data[:int(len(legit_data)*2 / 3)]
+    legit_test = legit_data[int(len(legit_data)*2 / 3):]
+    
+    NB_classifier = NaiveBayesClassifier()
+    NB_classifier.train(spam_train, legit_train)
+    
+    text = ' '.join(argv[1:])
+    print("Probability of being Spam:", NB_classifier.predict(text))
