@@ -54,7 +54,6 @@ class NaiveBayesClassifier():
 
         return self.prob_words_given_spam(words) * self.prob_spam() / self.prob_words(words)
         
-    
     def prob_words_given_spam(self, words):
         probability = 1
         # P(W1|spam) = P(W1 ∩ spam) / P(spam)
@@ -81,33 +80,12 @@ class NaiveBayesClassifier():
         # P(W1, W2) = P(W1, W2|spam)*P(spam) + P(W1, W2|legit)*P(legit)
         return self.prob_words_given_spam(words) * self.prob_spam() + self.prob_words_given_legit(words) * self.prob_legit()
 
-    
     def prob_spam(self):
         return self.num_spam / (self.num_spam + self.num_legit)
     def prob_legit(self):
         return self.num_legit / (self.num_spam + self.num_legit)
 
-
     @staticmethod
     def format_data(data):
         words = nltk.word_tokenize(data)
         return [w.lower() for w in words if w != ',' and w != '.']
-
-# Testing
-if __name__ == '__main__':
-    df = pd.read_csv('spam.csv', encoding='ISO-8859-1')
-    NB_classifier = NaiveBayesClassifier()
-    
-    spam_list, legit_list = [], []
-
-    for _, row in df.iterrows():
-        if row['v1'] == 'spam':
-            spam_list.append(row['v2'])
-        else:
-            legit_list.append(row['v2'])
-
-    NB_classifier.train(spam_list[:int(len(spam_list)/2)], legit_list[:int(len(legit_list)/2)], missing_word_prob=0.001)
-    
-    print(NB_classifier.predict(legit_list[len(legit_list)-1]))
-
-    print(NB_classifier.predict(spam_list[len(spam_list)-1]))
