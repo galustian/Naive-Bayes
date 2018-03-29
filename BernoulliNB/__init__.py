@@ -1,0 +1,1 @@
+from BernoulliNB.BernoulliNB import BernoulliNB
